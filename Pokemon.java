@@ -18,6 +18,9 @@ public class Pokemon
     private boolean wonChampionship;
     HashMap<String, Object[]> pokemonHashMap = new HashMap<String, Object[]>();
     
+    private int[] userLevels = new int[]{1, 2, 5, 10, 25};
+    private int[] pokemonXPLevels = new int[]{1000, 2500, 5000, 10000, 25000};
+    
     public Pokemon(String name, int age) {
         this.name = name;
         this.age = age;
@@ -69,19 +72,16 @@ public class Pokemon
         System.out.println("Your Current Pokemon");
         System.out.println("________________________________");
         
-        for (HashMap.Entry entry : pokemonHashMap.entrySet())
-        {
-            System.out.println("Pokemon: " + entry.getKey());
-            Object stats = entry.getValue();
-            
-            
-            for (Object[] pokemon : pokemonHashMap.values()) {
-                System.out.println("Type: " + pokemon[0]);
-                System.out.println("Level: " + pokemon[1]);
-                System.out.println("XP: " + pokemon[2]);
-            }
+        for (HashMap.Entry<String, Object[]> entry : pokemonHashMap.entrySet()) {
+            String pokemonKey = entry.getKey();
+            Object[] pokemonDetails = entry.getValue();
+        
+            System.out.println("Pokemon: " + pokemonKey);
+            System.out.println("Type: " + pokemonDetails[0]);
+            System.out.println("Level: " + pokemonDetails[1]);
+            System.out.println("XP: " + pokemonDetails[2]);
             System.out.println("________________________________");
-        }
+        }    
     }
     
     public Object ChooseStarter() {
@@ -103,23 +103,22 @@ public class Pokemon
                 if (options[i].equals(starter)) {
                     sc.close();
                     if (starter.equals("charmander")) {
-                        Object[] starterStats = new Object[]{"Fire", 1, 0} ;
+                        Object[] starterStats = new Object[]{"Fire", 1, 1000} ;
                         pokemonHashMap.put("Charmander", starterStats);
                         return starterStats;
                     }
                     else if (starter.equals("squirtle")) {
-                        Object[] starterStats = new Object[]{"Water", 1, 0} ;
+                        Object[] starterStats = new Object[]{"Water", 1, 1000} ;
                         pokemonHashMap.put("Squirtle", starterStats);
                         return starterStats;
                     }
                     else if (starter.equals("bulbasaur")) {
-                        Object[] starterStats = new Object[]{"Leaf", 1, 0} ;
+                        Object[] starterStats = new Object[]{"Leaf", 1, 1000} ;
                         pokemonHashMap.put("Bulbasaur", starterStats);
                         return starterStats;
                     }
                 }
             }
-            
             System.out.println("You didn't enter an available starter! Try again!");
         }
     }
@@ -160,7 +159,7 @@ public class Pokemon
             if (command.equals("catch")) {
                 System.out.println("You caught " + pokemon + "(" + pokemonType + " Type)!");
                 //Level, XP
-                Object[] pokemonStats = {pokemonType, 1, 0};
+                Object[] pokemonStats = {pokemonType, 1, 1000};
                 pokemonHashMap.put(pokemon, pokemonStats);
                 break;
             }
@@ -220,13 +219,33 @@ public class Pokemon
                     String pokemonType = "";
                     int pokemonLevel = 1;
                     int pokemonXP = 0;
-                    for (Object[] pokemon : pokemonHashMap.values()) {
-                        pokemonType = (String)pokemon[0];
-                        pokemonLevel = (int)pokemon[1];
-                        pokemonXP = (int)pokemon[2];
-                    }
-                    battleMechanics(command, pokemonType, pokemonLevel, pokemonXP,
+                    
+                    Object[] pokemonDetails = (Object[])entry.getValue();
+                    
+                    pokemonType = (String)pokemonDetails[0];
+                    pokemonLevel = (int)pokemonDetails[1];
+                    pokemonXP = (int)pokemonDetails[2];
+                    
+                    String result = battleMechanics(command, pokemonType, pokemonLevel, pokemonXP,
                                     trainerPokemonName, trainerPokemonType, trainerPokemonLevel);
+                    if (result.equals("Win")) {
+                        battlesWon += 1;
+                        pokemonXP += 1000;
+                        pokemonLevel = pokemonLevelCalculator(pokemonXP);
+                        pokemonHashMap.replace(entryPokemon,new Object[]{pokemonType, pokemonLevel, pokemonXP});
+                        System.out.println("Battle Result: Win!");
+                    }  
+                    else if (result.equals("Loss")) {
+                        System.out.println("Battle Result: Loss!");
+                    }      
+                    else if (result.equals("Tie")) {
+                        pokemonXP += 500;
+                        pokemonLevel = pokemonLevelCalculator(pokemonXP);
+                        pokemonHashMap.replace(entryPokemon,new Object[]{pokemonType, pokemonLevel, pokemonXP});
+                        System.out.println("Battle Result: Tie!");
+                    }      
+                    
+                    
                     break outerloop;
                 }
             }
@@ -265,25 +284,26 @@ public class Pokemon
     public Object[] generateMessage2() {
         HashMap<String, Object[]> trainerPokemon = new HashMap<String, Object[]>();
         
+        int level = 1;
         // Fire Pokemon
-        trainerPokemon.put("Fire1", new Object[]{"Charmander", "Fire", 1});
-        trainerPokemon.put("Fire2", new Object[]{"Vulpix", "Fire", 1});
-        trainerPokemon.put("Fire3", new Object[]{"Growlithe", "Fire", 1});
-        trainerPokemon.put("Fire4", new Object[]{"Ponyta", "Fire", 1});
-        trainerPokemon.put("Fire5", new Object[]{"Cyndaquil", "Fire", 1});
-        trainerPokemon.put("Fire6", new Object[]{"Slugma", "Fire", 1});
-        trainerPokemon.put("Fire7", new Object[]{"Torchic", "Fire", 1});
-        trainerPokemon.put("Fire8", new Object[]{"Chimchar", "Fire", 1});
+        trainerPokemon.put("Fire1", new Object[]{"Charmander", "Fire", level});
+        trainerPokemon.put("Fire2", new Object[]{"Vulpix", "Fire", level});
+        trainerPokemon.put("Fire3", new Object[]{"Growlithe", "Fire", level});
+        trainerPokemon.put("Fire4", new Object[]{"Ponyta", "Fire", level});
+        trainerPokemon.put("Fire5", new Object[]{"Cyndaquil", "Fire", level});
+        trainerPokemon.put("Fire6", new Object[]{"Slugma", "Fire", level});
+        trainerPokemon.put("Fire7", new Object[]{"Torchic", "Fire", level});
+        trainerPokemon.put("Fire8", new Object[]{"Chimchar", "Fire", level});
 
         // Leaf Pokemon
-        trainerPokemon.put("Leaf1", new Object[]{"Bulbasaur", "Leaf", 1});
-        trainerPokemon.put("Leaf2", new Object[]{"Oddish", "Leaf", 1});
-        trainerPokemon.put("Leaf3", new Object[]{"Bellsprout", "Leaf", 1});
-        trainerPokemon.put("Leaf4", new Object[]{"Chikorita", "Leaf", 1});
-        trainerPokemon.put("Leaf5", new Object[]{"Treecko", "Leaf", 1});
-        trainerPokemon.put("Leaf6", new Object[]{"Seedot", "Leaf", 1});
-        trainerPokemon.put("Leaf7", new Object[]{"Snivy", "Leaf", 1});
-        trainerPokemon.put("Leaf8", new Object[]{"Turtwig", "Leaf", 1});
+        trainerPokemon.put("Leaf1", new Object[]{"Bulbasaur", "Leaf", level});
+        trainerPokemon.put("Leaf2", new Object[]{"Oddish", "Leaf", level});
+        trainerPokemon.put("Leaf3", new Object[]{"Bellsprout", "Leaf", level});
+        trainerPokemon.put("Leaf4", new Object[]{"Chikorita", "Leaf", level});
+        trainerPokemon.put("Leaf5", new Object[]{"Treecko", "Leaf", level});
+        trainerPokemon.put("Leaf6", new Object[]{"Seedot", "Leaf", level});
+        trainerPokemon.put("Leaf7", new Object[]{"Snivy", "Leaf", level});
+        trainerPokemon.put("Leaf8", new Object[]{"Turtwig", "Leaf", level});
 
         // Water Pokemon
         trainerPokemon.put("Water1", new Object[]{"Squirtle", "Water", 1});
@@ -306,11 +326,66 @@ public class Pokemon
     }
     
     
-    public void battleMechanics(String pokemonName, String pokemonType, int pokemonLevel, int pokemonXP,
+    public String battleMechanics(String pokemonName, String pokemonType, int pokemonLevel, int pokemonXP,
                                 String trainerPokemonName, String trainerPokemonType, int trainerPokemonLevel) {
         System.out.println(pokemonName + ", Type: " + pokemonType + ", Level: " + pokemonLevel + "(XP: " + pokemonXP + ")");
         System.out.println("...VS...");
         System.out.println(trainerPokemonName + ", Type: " +  trainerPokemonType + ", Level: " + trainerPokemonLevel);
+        
+        int score = 0;
+        int trainerScore = 0;
+        
+        if (pokemonType.equals("Water") && trainerPokemonType.equals("Fire")) {
+            score += 1;
+        }
+        if (pokemonType.equals("Leaf") && trainerPokemonType.equals("Water")) {
+            score += 1;
+        }
+        if (pokemonType.equals("Fire") && trainerPokemonType.equals("Leaf")) {
+            score += 1;
+        }
+        else if (pokemonType.equals("Fire") && trainerPokemonType.equals("Water")) {
+            trainerScore += 1;
+        }
+        else if (pokemonType.equals("Water") && trainerPokemonType.equals("Leaf")) {
+            trainerScore += 1;
+        }
+        else if (pokemonType.equals("Leaf") && trainerPokemonType.equals("Fire")) {
+            trainerScore += 1;
+        }
+        
+        if (pokemonLevel > trainerPokemonLevel) {
+            score *= ((pokemonLevel - trainerPokemonLevel)/10);
+        }
+        else if (trainerPokemonLevel > pokemonLevel) {
+            trainerScore += ((trainerPokemonLevel - pokemonLevel)/10);
+        }
+        
+        if (score > trainerScore) {
+            return "Win";
+        }
+        else if (trainerScore > score) {
+            return "Loss";
+        }
+        else {
+            return "Tie";
+        }
+    }
+    
+    public int pokemonLevelCalculator(int pokemonXP) {
+        int calculatedLevel = 1;
+        if (pokemonXP < 25000) {
+            for (int i = 0; i < pokemonXPLevels.length; i++) {
+                if (pokemonXPLevels[i] > pokemonXP) {
+                    calculatedLevel = i;
+                    break;
+                }
+            }
+        }
+        else {
+            calculatedLevel = 5;
+        }
+        return calculatedLevel;
     }
     
     public void catchPokemon() {
