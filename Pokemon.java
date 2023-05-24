@@ -3,7 +3,7 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Iterator;
 /**
- * Write a description of class Pokemon here.
+ * Simple Pokemon game played on the terminal.
  *
  * @author devmonkeyy
  * @version 5/23/23
@@ -11,21 +11,27 @@ import java.util.Iterator;
 public class Pokemon
 {
     private String name;
-    private int age;
     private Object starter;
-    private int battlesWon;
-    private int level;
-    private boolean wonChampionship;
+    private int battlesWon = 0;
+    // private boolean wonChampionship;
     HashMap<String, Object[]> pokemonHashMap = new HashMap<String, Object[]>();
+    private int[] pokemonXPLevels = new int[]{1000, 2500, 5000, 10000, 25000, 50000, 75000, 100000};
     
-    private int[] userLevels = new int[]{1, 2, 5, 10, 25};
-    private int[] pokemonXPLevels = new int[]{1000, 2500, 5000, 10000, 25000};
     
-    public Pokemon(String name, int age) {
+    /** 
+     * Empty constructor for Pokemon methods
+     */
+    public Pokemon() {
+    
+    }
+    
+    /**
+     * Overloaded constructor for objects of the class Pokemon.
+     * 
+     * @param  name  User's name
+     */
+    public Pokemon(String name) throws InterruptedException {
         this.name = name;
-        this.age = age;
-        this.level = 0;
-        this.wonChampionship = false;
         this.starter = ChooseStarter();
         this.pokemonHashMap = pokemonHashMap;
         System.out.println("Congratulations! You got " + getStarter() + "!");
@@ -35,6 +41,7 @@ public class Pokemon
         System.out.println();
         firstCatch();
         System.out.println();
+        Thread.sleep(2000);
         System.out.println("________________________________");
         System.out.println("Tip: You can use the pokemon command to access your current pokemon!");
         System.out.println("Enter continue to continue your journey!");
@@ -42,6 +49,7 @@ public class Pokemon
         System.out.println("Catch as many Pokemon as you can.");
         System.out.println("Gotta catch em' all!");
         System.out.println("________________________________");
+        Thread.sleep(2000);
         System.out.println();
         System.out.println();
         
@@ -50,24 +58,33 @@ public class Pokemon
             journey();
             System.out.println();
             System.out.println();
+            Thread.sleep(2000);
         }
     }
     
-    
+    /**
+     * A getter for the name of the user. 
+     * 
+     * @return the user's name
+     */
     public String getName() {
         return name;
     }
     
-    public int getAge() {
-        return age;
-    }
-    
+    /**
+     * A getter for the user's Starter Pokemon.
+     * 
+     * @return the user's starter Pokemon
+     */
     public Object getStarter() {
         return starter;
     }
 
     
-    public void getPokemon() {
+    /**
+     * Displays your current Pokemon.
+     */
+    public void displayPokemon() {
         System.out.println("________________________________");
         System.out.println("Your Current Pokemon");
         System.out.println("________________________________");
@@ -84,13 +101,20 @@ public class Pokemon
         }    
     }
     
-    public Object ChooseStarter() {
+    
+    /**
+     * Getter for the starter stats
+     * 
+     * @return stats of chosen starter
+     */
+    public String ChooseStarter() throws InterruptedException {
         Scanner sc = new Scanner(System.in);
     
         System.out.println("Choose your starter! Gotta Catch 'Em All! ");
         System.out.println("Charmander: Fire Type");
         System.out.println("Squirtle: Water Type");
         System.out.println("Bulbasaur: Leaf Type");
+        Thread.sleep(2000);
         
         while (true) {
             String starter = sc.nextLine().toLowerCase();
@@ -105,25 +129,27 @@ public class Pokemon
                     if (starter.equals("charmander")) {
                         Object[] starterStats = new Object[]{"Fire", 1, 1000} ;
                         pokemonHashMap.put("Charmander", starterStats);
-                        return starterStats;
                     }
                     else if (starter.equals("squirtle")) {
                         Object[] starterStats = new Object[]{"Water", 1, 1000} ;
                         pokemonHashMap.put("Squirtle", starterStats);
-                        return starterStats;
                     }
                     else if (starter.equals("bulbasaur")) {
                         Object[] starterStats = new Object[]{"Leaf", 1, 1000} ;
                         pokemonHashMap.put("Bulbasaur", starterStats);
-                        return starterStats;
                     }
+                    return starter.substring(0, 1).toUpperCase() + starter.substring(1);
                 }
             }
             System.out.println("You didn't enter an available starter! Try again!");
         }
     }
     
-    public void firstCatch() {
+    
+    /**
+     * First catch of Pokemon journey. Adds the Pokemon to the Hash Map.
+     */
+    public void firstCatch() throws InterruptedException {
         Scanner sc = new Scanner(System.in); 
         
         HashMap<String, String> wildPokemon = new HashMap<String, String>();
@@ -138,7 +164,7 @@ public class Pokemon
         int rnd = new Random().nextInt(wildPokemon.size());
         
         String pokemonType = wildPokemon.get(wildPokemon.keySet().toArray()[rnd]);
-        String pokemon = null;
+        String pokemon = "";
         
         for (HashMap.Entry<String, String> entry : wildPokemon.entrySet()) {
             if (entry.getValue() == pokemonType) {
@@ -149,6 +175,7 @@ public class Pokemon
 
         
         System.out.println("Welcome to the Pokeverse " + name + "! You spot a wild " + pokemon + "!");
+        Thread.sleep(2000);
         System.out.println("Enter catch to catch... Gotta Catch 'Em All");
         
         while (true) {
@@ -168,7 +195,10 @@ public class Pokemon
         }
     }
     
-    public void journey() {
+    /**
+     * Randomly selects battle or catch pokemon, with slight bias towards battle.
+     */
+    public void journey() throws InterruptedException {
         Random r = new Random();
         int low = 1;
         int high = 7;
@@ -181,14 +211,17 @@ public class Pokemon
         }
     }
     
-    public void battle() {
+    /**
+     * Simulates a battle with a random trainer and Pokemon. 
+     */
+    public void battle() throws InterruptedException {
         Scanner sc = new Scanner(System.in); 
         
         System.out.println("________________________________");
         String message1 = generateMessage1();  
         System.out.println(message1);
 
-        Object[] randomPokemon = generateMessage2();
+        Object[] randomPokemon = generateMessage2Variables();
         
         String trainerPokemonName = (String)randomPokemon[0];
         String trainerPokemonType = (String)randomPokemon[1];
@@ -202,9 +235,12 @@ public class Pokemon
         System.out.println(message2);
         System.out.println("________________________________");
         
+        Thread.sleep(2000);
         
-        getPokemon();
+        displayPokemon();
         System.out.println("Enter the name of the pokemon you choose.");
+        
+        Thread.sleep(2000);
         
         outerloop:
         while (true) {
@@ -228,12 +264,13 @@ public class Pokemon
                     
                     String result = battleMechanics(command, pokemonType, pokemonLevel, pokemonXP,
                                     trainerPokemonName, trainerPokemonType, trainerPokemonLevel);
+                    System.out.println("________________________________");
                     if (result.equals("Win")) {
                         battlesWon += 1;
                         pokemonXP += 1000;
                         pokemonLevel = pokemonLevelCalculator(pokemonXP);
                         pokemonHashMap.replace(entryPokemon,new Object[]{pokemonType, pokemonLevel, pokemonXP});
-                        System.out.println("Battle Result: Win!");
+                        System.out.println("Battle Result: Win! Your " + entryPokemon + " has gained 1000 XP!");
                     }  
                     else if (result.equals("Loss")) {
                         System.out.println("Battle Result: Loss!");
@@ -242,8 +279,9 @@ public class Pokemon
                         pokemonXP += 500;
                         pokemonLevel = pokemonLevelCalculator(pokemonXP);
                         pokemonHashMap.replace(entryPokemon,new Object[]{pokemonType, pokemonLevel, pokemonXP});
-                        System.out.println("Battle Result: Tie!");
-                    }      
+                        System.out.println("Battle Result: Tie! Your " + entryPokemon + " has gained 500 XP!");
+                    }  
+                    System.out.println("________________________________");
                     
                     
                     break outerloop;
@@ -256,6 +294,11 @@ public class Pokemon
         }
     }
     
+    /**
+     * Getter that returns a random encountering message with a random trainer.
+     * 
+     * @return random message
+     */
     public String generateMessage1() {
         String[] trainers = new String[]{"Brock", 
             "Misty", "Lt. Surge", "Erika", 
@@ -281,7 +324,12 @@ public class Pokemon
         return message1;
     }
     
-    public Object[] generateMessage2() {
+    /**
+     * Get a random pokemon's stats
+     * 
+     * @return random pokemon's stats
+     */
+    public Object[] generateMessage2Variables() {
         HashMap<String, Object[]> trainerPokemon = new HashMap<String, Object[]>();
     
         int level = 1;
@@ -302,7 +350,6 @@ public class Pokemon
         int low = minLevel;
         int high = maxLevel + 1;
         level = r.nextInt(high-low) + low;
-        System.out.println(level);
         
         // Fire Pokemon
         trainerPokemon.put("Fire1", new Object[]{"Charmander", "Fire", level});
@@ -342,12 +389,18 @@ public class Pokemon
         return randomPokemon;
     }
     
-    
+    /**
+     * Getter for battle result
+     * 
+     * @return "Win", "Loss", or "Tie"
+     */
     public String battleMechanics(String pokemonName, String pokemonType, int pokemonLevel, int pokemonXP,
                                 String trainerPokemonName, String trainerPokemonType, int trainerPokemonLevel) {
+        System.out.println("________________________________");
         System.out.println(pokemonName + ", Type: " + pokemonType + ", Level: " + pokemonLevel + "(XP: " + pokemonXP + ")");
         System.out.println("...VS...");
         System.out.println(trainerPokemonName + ", Type: " +  trainerPokemonType + ", Level: " + trainerPokemonLevel);
+        System.out.println("________________________________");
         
         int score = 0;
         int trainerScore = 0;
@@ -389,9 +442,14 @@ public class Pokemon
         }
     }
     
+    /**
+     * Getter for new Level based on XP.
+     * 
+     * @return calculated level
+     */
     public int pokemonLevelCalculator(int pokemonXP) {
         int calculatedLevel = 1;
-        if (pokemonXP < 25000) {
+        if (pokemonXP < 100000) {
             for (int i = 0; i < pokemonXPLevels.length; i++) {
                 if (pokemonXPLevels[i] > pokemonXP) {
                     calculatedLevel = i;
@@ -400,19 +458,69 @@ public class Pokemon
             }
         }
         else {
-            calculatedLevel = 5;
+            calculatedLevel = 8;
         }
         return calculatedLevel;
     }
     
+    /**
+     * Simulates a catching situation
+     */
     public void catchPokemon() {
         Scanner sc = new Scanner(System.in); 
         
         System.out.println("________________________________");
-        generateWildPokemon();
+        String[] wildPokemonData = generateWildPokemon();
+        String pokemonName = wildPokemonData[0];
+        String pokemonType = wildPokemonData[1];
+        String catchMessage1 = generateCatchMessage1(pokemonName, pokemonType);
+        System.out.println(catchMessage1);
+        System.out.println("Enter catch to catch. Gotta Catch Em' All!");
+        System.out.println("________________________________");
+        
+        while (true) {
+            String command = sc.nextLine().toLowerCase();
+            
+            stop(command);
+            
+            if (command.equals("catch")) {
+                break;
+            }
+        }
+        
+        String catchResult = catchMechanics();
+        if (catchResult.equals("Caught")) {
+            Object[] pokemonStats = {pokemonType, 1, 1000};
+                pokemonHashMap.put(pokemonName, pokemonStats);
+            System.out.println("You caught " + pokemonName +", Type "+ pokemonType + "!");
+        }
+        else {
+            System.out.println("Better Luck Next Time!");
+        }
     }
     
-    public Object generateWildPokemon() {
+    /**
+     * Getter for result of catching situation. User is given three chances, with randomized results.
+     * 
+     * @return "Caught" or "Not Caught"
+     */
+    public String catchMechanics() {
+        Random r = new Random();
+        for (int i = 0; i < 3; i++) {
+            int randomNumber = r.nextInt(2);
+            if (randomNumber == 0) {
+                return "Caught";
+            }
+        }
+        return "Not Caught";
+    }
+    
+    /**
+     * Getter for the stats of a random wild Pokemon.
+     * 
+     * @return a random wild Pokemon's stats
+     */
+    public String[] generateWildPokemon() {
         HashMap<String, String> wildPokemon = new HashMap<>();
         
         // Fire Pokemon 
@@ -451,26 +559,94 @@ public class Pokemon
         wildPokemon.put("Decidueye", "Leaf");
         wildPokemon.put("Rillaboom", "Leaf");
         
-        Random r = new Random();
-        int randomIndex = r.nextInt(wildPokemon.size());
-        String randomKey = (String) wildPokemon.keySet().toArray()[randomIndex];
+        int rnd = new Random().nextInt(wildPokemon.size());
         
-        Object[] randomWildPokemon = trainerPokemon.get(randomKey);
+        String pokemonType = wildPokemon.get(wildPokemon.keySet().toArray()[rnd]);
+        String pokemon = "";
+        
+        for (HashMap.Entry<String, String> entry : wildPokemon.entrySet()) {
+            if (entry.getValue() == pokemonType) {
+                pokemon = entry.getKey();
+                break;
+            }
+        }
+        
+        String[] randomWildPokemon = new String[]{pokemon, pokemonType};
+
         
         return randomWildPokemon;
     }
     
+    /**
+     * Getter for a random encountering wild Pokemon message
+     * 
+     * @return random encountering wild Pokemon message
+     */
+    public String generateCatchMessage1(String pokemonName, String pokemonType) {
+        String[] messages = new String[]{"You've encountered a wild " + pokemonName + "! It's a " + pokemonType + " type!",
+                        "Look, there's a " + pokemonType + " Pokémon named " + pokemonName + "!",
+                        "Oh, it seems you've come across a " + pokemonType + " Pokémon called " + pokemonName + "!",
+                        "You've stumbled upon a " + pokemonType + " Pokémon known as " + pokemonName + "!",
+                        "A wild " + pokemonName + " appeared! It's a " + pokemonType + " type Pokémon!",
+                        "Behold! " + pokemonName + ", a magnificent " + pokemonType + " Pokémon, has crossed your path!",
+                        "Prepare for an encounter with " + pokemonName + "! It's a " + pokemonType + " type Pokémon!",
+                        "You've found a " + pokemonType + " Pokémon named " + pokemonName + " in your way!",
+                        "Get ready! A " + pokemonType + " Pokémon named " + pokemonName + " is here to challenge you!",
+                        "On your journey, you discovered a wild " + pokemonName + "! It belongs to the " + pokemonType + " type!"};
+        
+        int rnd = new Random().nextInt(messages.length);
+        String message = messages[rnd];   
+        
+        return message;
+    }
     
-    
-    public boolean endGame() {
-        if (wonChampionship) {
-            System.out.println("You beat the champion! You beat the game!");
+    /**
+     * Getter for whether or not the game has ended, with an option to play again.
+     * 
+     * @return True if end game has not been achieved
+     */
+    public boolean endGame() throws InterruptedException {
+        Scanner sc = new Scanner(System.in); 
+        // if (wonChampionship) {
+            // System.out.println("You beat the champion! You beat the game!");
+            // Thread.sleep(2000);
+            // System.out.println("Do you want to play again?");
+            // System.exit(0);
+        // }
+        if (battlesWon >=  1000 || pokemonHashMap.size() >= 500) {
+            if (battlesWon >= 1000) {
+                System.out.println("You have 1000 trainers! You beat the game!");
+            }
+            else if (pokemonHashMap.size() >= 500) {
+                System.out.println("You 500 Pokemon! You beat the game!");
+            }
+            Thread.sleep(2000);
+            System.out.println("Do you want to play again? (y/n)");
+            while (true) {
+                String command = sc.nextLine().toLowerCase();
+                if (command.equals("y") || command.equals("yes")) {
+                    battlesWon = 0;
+                    pokemonHashMap.clear();
+                }
+                else if (command.equals("n") || command.equals("no")) {
+                    System.exit(0);
+                }
+            }
+        }
+        else if (pokemonHashMap.size() >= 500) {
+            System.out.println("You 500 Pokemon! You beat the game!");
+            Thread.sleep(2000);
+            System.out.println("Do you want to play again?");
             System.exit(0);
+        
         }
         
         return true;
     }
     
+    /**
+     * Stop game if person enters "stop" in the terminal.
+     */
     public void stop(String command) {
         if (command.equals("stop")) {
             System.out.println("You decided to quit.");
