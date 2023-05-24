@@ -5,8 +5,8 @@ import java.util.Iterator;
 /**
  * Write a description of class Pokemon here.
  *
- * @author Ryan Zhang
- * @version 5/15/23
+ * @author devmonkeyy
+ * @version 5/23/23
  */
 public class Pokemon
 {
@@ -283,8 +283,27 @@ public class Pokemon
     
     public Object[] generateMessage2() {
         HashMap<String, Object[]> trainerPokemon = new HashMap<String, Object[]>();
-        
+    
         int level = 1;
+        int minLevel = 5;
+        int maxLevel = 1;
+        
+        for (Object[] stats : pokemonHashMap.values()) {
+            int statLevel = (int)stats[1];
+            if (statLevel < minLevel) {
+                minLevel = statLevel;
+            }
+            else if (statLevel > maxLevel) {
+                maxLevel = statLevel;
+            }
+        }
+        
+        Random r = new Random();
+        int low = minLevel;
+        int high = maxLevel + 1;
+        level = r.nextInt(high-low) + low;
+        System.out.println(level);
+        
         // Fire Pokemon
         trainerPokemon.put("Fire1", new Object[]{"Charmander", "Fire", level});
         trainerPokemon.put("Fire2", new Object[]{"Vulpix", "Fire", level});
@@ -314,8 +333,6 @@ public class Pokemon
         trainerPokemon.put("Water6", new Object[]{"Lotad", "Water", 1});
         trainerPokemon.put("Water7", new Object[]{"Oshawott", "Water", 1});
         trainerPokemon.put("Water8", new Object[]{"Piplup", "Water", 1});
-        
-        Random r = new Random();
         
         int randomIndex = r.nextInt(trainerPokemon.size());
         String randomKey = (String) trainerPokemon.keySet().toArray()[randomIndex];
@@ -389,8 +406,60 @@ public class Pokemon
     }
     
     public void catchPokemon() {
+        Scanner sc = new Scanner(System.in); 
         
+        System.out.println("________________________________");
+        generateWildPokemon();
     }
+    
+    public Object generateWildPokemon() {
+        HashMap<String, String> wildPokemon = new HashMap<>();
+        
+        // Fire Pokemon 
+        wildPokemon.put("Charizard", "Fire");
+        wildPokemon.put("Arcanine", "Fire");
+        wildPokemon.put("Blaziken", "Fire");
+        wildPokemon.put("Magmar", "Fire");
+        wildPokemon.put("Infernape", "Fire");
+        wildPokemon.put("Heatran", "Fire");
+        wildPokemon.put("Emboar", "Fire");
+        wildPokemon.put("Volcarona", "Fire");
+        wildPokemon.put("Chandelure", "Fire");
+        wildPokemon.put("Incineroar", "Fire");
+
+        // Water Pokemon
+        wildPokemon.put("Blastoise", "Water");
+        wildPokemon.put("Gyarados", "Water");
+        wildPokemon.put("Swampert", "Water");
+        wildPokemon.put("Lapras", "Water");
+        wildPokemon.put("Kingdra", "Water");
+        wildPokemon.put("Milotic", "Water");
+        wildPokemon.put("Samurott", "Water");
+        wildPokemon.put("Carracosta", "Water");
+        wildPokemon.put("Greninja", "Water");
+        wildPokemon.put("Primarina", "Water");
+
+        // Leaf Pokemon
+        wildPokemon.put("Venusaur", "Leaf");
+        wildPokemon.put("Exeggutor", "Leaf");
+        wildPokemon.put("Sceptile", "Leaf");
+        wildPokemon.put("Leafeon", "Leaf");
+        wildPokemon.put("Roserade", "Leaf");
+        wildPokemon.put("Tangrowth", "Leaf");
+        wildPokemon.put("Serperior", "Leaf");
+        wildPokemon.put("Virizion", "Leaf");
+        wildPokemon.put("Decidueye", "Leaf");
+        wildPokemon.put("Rillaboom", "Leaf");
+        
+        Random r = new Random();
+        int randomIndex = r.nextInt(wildPokemon.size());
+        String randomKey = (String) wildPokemon.keySet().toArray()[randomIndex];
+        
+        Object[] randomWildPokemon = trainerPokemon.get(randomKey);
+        
+        return randomWildPokemon;
+    }
+    
     
     
     public boolean endGame() {
@@ -408,6 +477,4 @@ public class Pokemon
             System.exit(0);
         }
     }
-    
-    
 }
